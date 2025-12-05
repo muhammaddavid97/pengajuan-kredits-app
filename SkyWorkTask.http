@@ -1,0 +1,6 @@
+@SkyWorkTask_HostAddress = http://localhost:5037
+
+GET {{SkyWorkTask_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
