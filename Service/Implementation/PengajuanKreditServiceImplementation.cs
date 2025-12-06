@@ -1,4 +1,5 @@
-﻿using SkyWorkTask.dto;
+﻿using Microsoft.EntityFrameworkCore.Storage.Json;
+using SkyWorkTask.dto;
 using SkyWorkTask.Model;
 using SkyWorkTask.Repository;
 using SkyWorkTask.Service.Interface;
@@ -63,7 +64,7 @@ namespace SkyWorkTask.Service.Implementation
                 Plafon = item.Plafon,
                 Tenor = item.Tenor,
                 CreatedAt = item.CreatedAt,
-                UpdateAt = item.UpdateAt
+                UpdatedAt = item.UpdateAt
             });
         }
 
@@ -82,7 +83,7 @@ namespace SkyWorkTask.Service.Implementation
                 Plafon = getData.Plafon,
                 Tenor = getData.Plafon,
                 CreatedAt = getData.CreatedAt,
-                UpdateAt = getData.UpdateAt
+                UpdatedAt = getData.UpdateAt
             };
 
             return results;
@@ -106,10 +107,30 @@ namespace SkyWorkTask.Service.Implementation
                 Plafon = data.Plafon,
                 Tenor = data.Tenor,
                 CreatedAt = data.CreatedAt,
-                UpdateAt = data.UpdateAt
+                UpdateAt = data.UpdatedAt
             };
 
             await _pengajuanKreditRepository.UpdateDataAsync(getData);
+        }
+
+        public async Task<PengajuanKreditDTO> AngsuranPerbulan(PengajuanKreditDTO data)
+        {
+            var newData = new PengajuanKreditDTO();
+
+            decimal bungaBulanan = data.Bunga / 100m / 12m; // decimal
+            double powDouble = Math.Pow((double)(1 + bungaBulanan), data.Tenor);
+            decimal pangkat = (decimal)powDouble;
+
+            decimal angsuran = data.Plafon * (bungaBulanan * pangkat) / (pangkat - 1m);
+            angsuran = decimal.Round(angsuran, 2);
+
+            return new PengajuanKreditDTO
+            {
+                Plafon = data.Plafon,
+                Bunga = data.Bunga,
+                Tenor = data.Tenor,
+                HitungAngsuran = angsuran
+            };
         }
     }
 }

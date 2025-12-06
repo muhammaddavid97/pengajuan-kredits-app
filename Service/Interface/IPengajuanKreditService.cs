@@ -10,6 +10,7 @@ namespace SkyWorkTask.Service.Interface
         Task AddNewDataAsync(PengajuanKreditDTO data);
         Task  UpdateDataAsync(PengajuanKreditDTO data);
         Task DeleteDataAsync(int id);
+        Task<PengajuanKreditDTO> AngsuranPerbulan(PengajuanKreditDTO data);
 
     }
 }
